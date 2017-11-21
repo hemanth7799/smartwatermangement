@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+  <head>
+        <meta http-equiv="refresh" content="30">
+<title>Dash board</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif;}
+body, html {
+    height: 100%;
+    color: greenyellow;
+    line-height: 1.8;
+}
+
+/* Create a Parallax Effect */
+.bgimg-1, .bgimg-2, .bgimg-3 {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* First image (Logo. Full height) */
+.bgimg-1 {
+    background-image: url("{% static 'images/dashboard.jpg' %}");
+    min-height: 90%;
+}
+
+/* Second image (Portfolio) */
+.bgimg-2 {
+    background-image: url("{% static 'images/dash3.jpg'%}");
+    min-height: 600px;
+}
+
+/* Third image (Contact) */
+.bgimg-3 {
+    background-image: url("{% static 'images/dash4.jpg'%}");
+    min-height: 600px;
+}
+
+.w3-wide {letter-spacing: 10px;}
+.w3-hover-opacity {cursor: pointer;}
+
+/* Turn off parallax scrolling for tablets and phones */
+@media only screen and (max-device-width: 1024px) {
+    .bgimg-1, .bgimg-2, .bgimg-3 {
+        background-attachment: scroll;
+    }
+}
+@import url(https://fonts.googleapis.com/css?family=Exo:100,200,400);
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:700,400,300);
+
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+</head>
+<body>
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+    <div class="w3-bar" id="myNavbar">
+      <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+        <i class="fa fa-bars"></i>
+      </a>
+      <a href="#home" class="w3-bar-item w3-button">Dashboard</a>
+      <a href="#about" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-user"></i> Bar graph</a>
+      <a href="#portfolio" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> Readings</a>
+      <a href="#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> Graph</a>
+	<a href="/plant/map/{{id}}" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> View on map</a>
+      <div class="w3-dropdown-hover">
+        <button class="w3-button w3-bar-item w3-hide-small"><i class= "fa fa-tree" >PLANT</i></button>
+        <div class="w3-dropdown-content w3-bar-block w3-border">
+{% for plant in all_plants %}
+          <a href="/plant/dashboard/{{plant.pk}}" class="w3-bar-item w3-button ">Plant {{plant.pk}}</a>
+  {% endfor %} 
+<a href="/add/" class="w3-bar-item w3-button ">Add Plant</a>
+        </div>
+      </div>
+ <div class="w3-dropdown-hover">
+        <button class="w3-button w3-bar-item w3-hide-small"><i class= "fa fa-tree" >PUMP STATE - {{ms}}</i></button>
+        <div class="w3-dropdown-content w3-bar-block w3-border">
+	   <a href="/motorcontrol/?motorstate=True&automode=False" class="w3-bar-item w3-button ">ON MOTOR</a>
+          <a href="/motorcontrol/?motorstate=False&automode=False" class="w3-bar-item w3-button ">OFF MOTOR</a>
+ 	 <a href="/motorcontrol/?motorstate=True&automode=True" class="w3-bar-item w3-button ">AUTOMATICMODE</a>
+        </div>
+      </div>
+     <table class="w3-right"> <tr>
+      <td><a href="{% url 'plant:logout_user' %}" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> Log-Out</a></td></tr></table>
+    </div>
+    </div>
+
+<div class="bgimg-1 w3-display-container " id="home">
+  <div class="w3-display-middle" style="white-space:nowrap;">
+    <span class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity">PLANT <span class="w3-hide-small">MONITORING</span> SYSTEM</span>
+  </div>
+</div>
+
+<!-- Container (About Section) -->
+<div class="w3-content w3-container w3-padding-64" id="about">
+        <script>
+                window.onload = function () {
+                    
+                var chart = new CanvasJS.Chart("chartContainer", {
+                    animationEnabled: true,
+                    
+                    title:{
+                        text:""
+                    },
+                    axisX:{
+                        interval: 1
+                    },
+                    axisY2:{
+                        
+                        gridColor: "rgba(1,77,101,.1)",
+                        title: "GRAPH READINGS..."
+                    },
+                    data: [{
+                        type: "bar",
+                        name: "companies",
+                        axisYType: "secondary",
+                        color: "orange",
+                        dataPoints: [
+                            { y: parseInt('{{water}}'), label: "Water level" },
+                            { y: parseInt('{{soil}}'), label: "Soil moisture" },
+                            { y: parseInt('{{hum}}'), label: "Humdity" },
+                            { y: parseInt('{{tem}}'), label: "Temperature" },
+                            
+                            
+                        ]
+                    }]
+                });
+                chart.render();
+                
+                }
+                </script>
+                <div id="chartContainer" style="height: 400px; width: 80%;"></div>
+                <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>                
+  </div>
+<div class="w3-row w3-center w3-dark-grey w3-padding-16">
+  <div class="w3-quarter w3-section">
+    <span class="w3-xlarge">{{tem}}</span><br>
+    Temperature
+  </div>
+  <div class="w3-quarter w3-section">
+    <span class="w3-xlarge">{{hum}}</span><br>
+    Humidity
+  </div>
+  <div class="w3-quarter w3-section">
+    <span class="w3-xlarge">{{soil}}</span><br>
+    Soil moisture
+  </div>
+  <div class="w3-quarter w3-section">
+    <span class="w3-xlarge">{{water}}</span><br>
+    Water level
+  </div>
+<div class="w3-quarter w3-section">
+    <span class="w3-xlarge">{{time}}</span><br>
+    Time stamp
+  </div>
+</div>
+
+<!-- Second Parallax Image with Portfolio Text -->
+<div class="bgimg-2 w3-display-container">
+  <div class="w3-display-middle">
+    <span class="w3-xxlarge w3-text-white w3-wide">PLANT STATISTICS</span>
+  </div>
+</div>
+
+<!-- Container (Portfolio Section) -->
+<div class="w3-content w3-container w3-padding-64" id="portfolio">
+  <!--<h3 class="w3-center">MY WORK</h3>
+  <p class="w3-center"><em>Here are some of my latest lorem work ipsum tipsum.<br> Click on the images to make them bigger</em></p><br>
+
+  <!-- Responsive Grid. Four columns on tablets, laptops and desktops. Will stack on mobile devices/small screens (100% width) 
+  <div class="w3-row-padding w3-center">
+    <div class="w3-col m3">
+      <img src="/w3images/p1.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="The mist over the mountains">
+    </div>
+
+    <div class="w3-col m3">
+      <img src="/w3images/p2.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="Coffee beans">
+    </div>
+
+    <div class="w3-col m3">
+      <img src="/w3images/p3.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="Bear closeup">
+    </div>
+
+    <div class="w3-col m3">
+      <img src="/w3images/p4.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="Quiet ocean">
+    </div>
+  </div>
+
+  <div class="w3-row-padding w3-center w3-section">
+    <div class="w3-col m3">
+      <img src="/w3images/p5.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="The mist">
+    </div>
+
+    <div class="w3-col m3">
+      <img src="/w3images/p6.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="My beloved typewriter">
+    </div>
+
+    <div class="w3-col m3">
+      <img src="/w3images/p7.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="Empty ghost train">
+    </div>
+
+    <div class="w3-col m3">
+      <img src="/w3images/p8.jpg" style="width:100%" onclick="onClick(this)" class="w3-hover-opacity" alt="Sailing">
+    </div>
+    <button class="w3-button w3-padding-large w3-light-grey" style="margin-top:64px">LOAD MORE</button>
+  </div>-->
+  <div style="width: 800px; height: 400px; margin: 0 auto">
+        <div id="container-Temperature" style="width: 300px; height: 200px; float: left"></div>
+        <div id="container-Humidity" style="width: 300px; height: 200px; float: left"></div>
+        <div id="container-Water " style="width: 300px; height: 200px; float: left"></div>
+        <div id="container-sm" style="width: 300px; height: 200px; float: left"></div>
+    </div>
+<script>
+var gaugeOptions = {
+
+chart: {
+type: 'solidgauge'
+},
+
+title: null,
+
+pane: {
+center: ['50%', '85%'],
+size: '140%',
+startAngle: -90,
+endAngle: 90,
+background: {
+backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+innerRadius: '60%',
+outerRadius: '100%',
+shape: 'arc'
+}
+},
+
+tooltip: {
+enabled: false
+},
+
+// the value axis
+yAxis: {
+stops: [
+[0.1, '#55BF3B'], // green
+[0.5, '#DDDF0D'], // yellow
+[0.9, '#DF5353'] // red
+],
+lineWidth: 0,
+minorTickInterval: null,
+tickAmount: 2,
+title: {
+y: -70
+},
+labels: {
+y: 16
+}
+},
+
+plotOptions: {
+solidgauge: {
+dataLabels: {
+    y: 5,
+    borderWidth: 0,
+    useHTML: true
+}
+}
+}
+};
+
+// The Temperature gauge
+var chartTemperature = Highcharts.chart('container-Temperature', Highcharts.merge(gaugeOptions, {
+yAxis: {
+min: 0,
+max: 100,
+title: {
+text: 'Temperature'
+}
+},
+
+credits: {
+enabled: false
+},
+
+series: [{
+name: 'Temperature',
+data: [parseInt('{{tem}}')],
+dataLabels: {
+format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+       '<span style="font-size:12px;color:silver">degrees</span></div>'
+},
+tooltip: {
+valueSuffix: 'Degrees'
+}
+}]
+
+}));
+var chartSm = Highcharts.chart('container-sm', Highcharts.merge(gaugeOptions, {
+yAxis: {
+min: 0,
+max: 100,
+title: {
+text: 'Soil moisture'
+}
+},
+
+credits: {
+enabled: false
+},
+
+series: [{
+name: 'Soil moisture',
+data: [parseInt('{{soil}}')],
+dataLabels: {
+format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+       '<span style="font-size:12px;color:silver"></span></div>'
+},
+tooltip: {
+valueSuffix: ''
+}
+}]
+
+}));
+// The Water  gauge
+var chartWater  = Highcharts.chart('container-Water ', Highcharts.merge(gaugeOptions, {
+yAxis: {
+min: 0,
+max: 100,
+title: {
+text: 'Water '
+}
+},
+
+credits: {
+enabled: false
+},
+
+series: [{
+name: 'Water ',
+data: [parseInt('{{water}}')],
+dataLabels: {
+format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+       '<span style="font-size:12px;color:silver">cm</span></div>'
+},
+tooltip: {
+valueSuffix: ' cm'
+}
+}]
+
+}));
+
+// The Humidity gauge
+var chartRpm = Highcharts.chart('container-Humidity', Highcharts.merge(gaugeOptions, {
+yAxis: {
+min: 0,
+max: 100,
+title: {
+text: 'Humidity'
+}
+},
+
+series: [{
+name: 'Humidity',
+data: [parseInt('{{hum}}')],
+dataLabels: {
+format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y:.1f}</span><br/>' +
+       '<span style="font-size:12px;color:silver"></span></div>'
+},
+tooltip: {
+valueSuffix: ''
+}
+}]
+
+}));
+
+// Bring life to the dials
+/*setInterval(function () {
+// Temperature
+var point,
+newVal,
+inc;
+
+if (chartTemperature) {
+point = chartTemperature.series[0].points[0];
+//inc = Math.round((Math.random() - 0.5) * 100);
+newVal = 65;
+//if (newVal < 0 || newVal > 200) {
+//newVal = point.y - inc;
+//}
+
+point.update(newVal);
+}
+if (chartWater ) {
+point = chartTemperature.series[0].points[0];
+//inc = Math.round((Math.random() - 0.5) * 100);
+newVal = 65;
+
+//if (newVal < 0 || newVal > 200) {
+//newVal = point.y - inc;
+//}
+
+point.update(newVal);
+}
+if (chartHumidity) {
+point = chartHumidity.series[0].points[0];
+//inc = Math.random() - 0.5;
+newVal = 89;
+
+/*if (newVal < 0 || newVal > 5) {
+newVal = point.y - inc;
+}
+
+point.update(newVal);
+}
+if (chartSm) {
+point = chartSm.series[0].points[0];
+inc = 55;
+newVal = 55;
+
+/*if (newVal < 0 || newVal > 5) {
+newVal = point.y - inc;
+}
+
+point.update(newVal);
+}
+}, 2000);*/
+</script>   
+
+</div>
+
+<!-- Modal for full size images on click-->
+<div id="modal01" class="w3-modal w3-black" onclick="this.style.display='none'">
+  <span class="w3-button w3-large w3-black w3-display-topright" title="Close Modal Image"><i class="fa fa-remove"></i></span>
+  <div class="w3-modal-content w3-animate-zoom w3-center w3-transparent w3-padding-64">
+    <img id="img01" class="w3-image">
+    <p id="caption" class="w3-opacity w3-large"></p>
+  </div>
+</div>
+
+<!-- Third Parallax Image with Portfolio Text -->
+<div class="bgimg-3 w3-display-container">
+  <div class="w3-display-middle">
+     <span class="w3-xxlarge w3-text-white w3-wide">GRAPH</span>
+  </div>
+</div>
+
+<!-- Container (Contact Section) -->
+<div class="w3-content w3-container w3-padding-64" id="contact">
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<script>
+    var tempValue = JSON.parse("{{temValues}}");
+    var humValues = JSON.parse("{{humValues}}");
+    console.log("{{temValues}}")
+    console.log(tempValue)
+    console.log(humValues)
+Highcharts.chart('container', {
+    chart: {
+        type: 'spline'
+    },
+    title: {
+        text: ' Temperature'
+    },
+    subtitle: {
+        text: 'Source: Sensors'
+    },
+    xAxis: {
+        categories: []
+    },
+    yAxis: {
+        title: {
+            text: 'Temperature'
+        },
+        labels: {
+            formatter: function () {
+                return this.value + '°';
+            }
+        }
+    },
+    tooltip: {
+        crosshairs: true,
+        shared: true
+    },
+    plotOptions: {
+        spline: {
+            marker: {
+                radius: 4,
+                lineColor: '#666666',
+                lineWidth: 1
+            }
+        }
+    },
+    series: [{
+        name: 'Temperature',
+        marker: {
+            symbol: 'square'
+        },
+        data: [ tempValue[10], tempValue[9],tempValue[8],tempValue[7], tempValue[6], tempValue[5], {
+            y: 26.5,
+            marker: {
+                symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+            }
+        }, tempValue[4], tempValue[3], tempValue[2], tempValue[1],tempValue[0]]
+
+    }, {
+        name: 'Humidity',
+        marker: {
+            symbol: 'diamond'
+        },
+        data: [{
+            y: 3.9,
+            marker: {
+                symbol: 'url(https://www.highcharts.com/samples/graphics/snow.png)'
+            }
+        }, humValues[10],humValues[9], humValues[8], humValues[7], humValues[6], humValues[5],humValues[4],humValues[3], humValues[2], humValues[1],humValues[0]]
+    }]
+});
+</script>
+</div>
+</body>
+</html>

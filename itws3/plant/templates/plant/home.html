@@ -1,0 +1,256 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+<title>Home</title>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="30">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+     <link rel="stylesheet" href="{% static 'css/style.css'%}">
+
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif;}
+body, html {
+    height: 100%;
+    color:skyblue;
+    line-height: 1.8;
+}
+
+/* Create a Parallax Effect */
+.bgimg-1, .bgimg-2, .bgimg-3 {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* First image (Logo. Full height) */
+.bgimg-1 {
+    background-image: url({% static 'images/project2.jpg'%});
+    min-height: 90%;
+}
+
+/* Second image (Portfolio) */
+.bgimg-2 {
+    background-image: url({% static 'images/bg3.jpg'%});
+    min-height: 400px;
+}
+
+/* Third image (Contact) */
+.bgimg-3 {
+    background-image: url({% static 'images/bg2.jpg'%});
+    min-height: 400px;
+}
+
+.w3-wide {letter-spacing: 10px;}
+.w3-hover-opacity {cursor: pointer;}
+
+/* Turn off parallax scrolling for tablets and phones */
+@media only screen and (max-device-width: 1024px) {
+    .bgimg-1, .bgimg-2, .bgimg-3 {
+        background-attachment: scroll;
+    }
+}
+@import url(https://fonts.googleapis.com/css?family=Exo:100,200,400);
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:700,400,300);
+
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+<script>
+  $(document).ready(function() {
+  $.simpleWeather({
+    location: 'Austin, TX',
+    woeid: '',
+    unit: 'f',
+    success: function(weather) {
+      html = '<h2><i class="icon-'+weather.code+'"></i> '+weather.temp+'&deg;'+weather.units.temp+'</h2>';
+      html += '<ul><li>'+weather.city+', '+weather.region+'</li>';
+      html += '<li class="currently">'+weather.currently+'</li>';
+      html += '<li>'+weather.wind.direction+' '+weather.wind.speed+' '+weather.units.speed+'</li></ul>';
+  
+      $("#weather").html(html);
+    },
+    error: function(error) {
+      $("#weather").html('<p>'+error+'</p>');
+    }
+  });
+});
+</script>
+</head>
+<body>
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+    <div class="w3-bar" id="myNavbar">
+      <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+        <i class="fa fa-bars"></i>
+      </a>
+      <a href="#home" class="w3-bar-item w3-button">HOME</a>
+      <a href="#about" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-user"></i> Weather-Station</a>
+      <a href="#portfolio" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> Our-Work</a>
+      <a href="#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
+    
+      <td><a href="{% url 'plant:login_user'%}" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> Login</a></td>
+      <td> <a href="{% url 'plant:register'%}" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> Register</a></td>
+    </div>
+    </div>
+
+<div class="bgimg-1 w3-display-container " id="home">
+  <div class="w3-display-middle" style="white-space:nowrap;">
+    <span class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity">PLANT <span class="w3-hide-small">MONITORING</span> SYSTEM</span>
+  </div>
+</div>
+
+<!-- Container (About Section) -->
+<div class="w3-content w3-container w3-padding-64" id="about">
+  <main>
+      <div class="row center-align" id="error"></div>
+      <div class="row">
+        <div class="col s10 offset-s1">
+          <div class="spinner center-align">
+            <div class="row">Getting your local weather...</div>
+            <div class="preloader-wrapper big active">
+              <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                  <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="weather-card" class="card-panel grey-text text-darken-1 hide">
+            <div id="location" class="row">
+              <div class="col s12 m6">
+                <h5 id="city"></h5>
+                <h6 id="date"></h6>
+                <h6 id="current-conditions"></h6>
+              </div>
+                </div>          
+            <div id="weather-current" class="row hide">
+              <div class="col m6 s12 temperature-details">
+                <span><img id="weather-icon" src="" alt="icon of today's weather">&nbsp;</span>
+                <span id="temperature"></span>&nbsp;
+                <span id="degree-units">&deg;F | &deg;C</span>
+              </div>
+              <div id="summary" class="col m6 s8 offset-s2">
+                <h6>Precipitation: <span id="precipitation"></span></h6>
+                <h6>Humidity: <span id="humidity"></span></h6>
+                <h6>Wind: <span id="wind"></span></h6>
+              </div>
+            </div>
+            <div id="weather-forecast" class="row"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js'></script>
+    
+        <script  src="{% static 'js/index.js'%}"></script>
+    
+</div>
+
+<!-- Second Parallax Image with Portfolio Text -->
+<div class="bgimg-2 w3-display-container w3-opacity-min">
+  <div class="w3-display-middle">
+    <span class="w3-xxlarge w3-text-white w3-wide">PORTFOLIO</span>
+  </div>
+</div>
+
+<!-- Container (Portfolio Section) -->
+<div class="w3-content w3-container w3-padding-64" id="portfolio">
+  <h3 class="w3-center">Our Project Work</h3>
+  <p class="w3-center"><em>Here is the work of our team members on plant monitoring system.<br></em></p><br>
+
+  <!-- Responsive Grid. Four columns on tablets, laptops and desktops. Will stack on mobile devices/small screens (100% width) -->
+  <div class="w3-row-padding w3-center">
+    Our project mainly focuses on welfare of the farmer . In this project we look after the plant statistics such as temperature , humidity , soil moisture , water level and we take these values.
+    with the soil moisture value we predict the plant condition whether it needs irrigation or not and e include special comnditions such as rainfall and drought.
+    In case of rainfall the irrigation is stopped and in case of drought we supply the water . we take care of the location of the plant and depict the condition of plant by changing its label color and its surroundings
+    water level is also shown in the map of the water body whether it is completely filled or nill based on its level by showing an image in the map 
+    We also provide the login advantage for security purposes and adding more plants to the project probiding an easy way for a farmer for his agriculture.
+  </div>
+</div>
+
+<!-- Modal for full size images on click-->
+<div id="modal01" class="w3-modal w3-black" onclick="this.style.display='none'">
+  <span class="w3-button w3-large w3-black w3-display-topright" title="Close Modal Image"><i class="fa fa-remove"></i></span>
+  <div class="w3-modal-content w3-animate-zoom w3-center w3-transparent w3-padding-64">
+    <img id="img01" class="w3-image">
+    <p id="caption" class="w3-opacity w3-large"></p>
+  </div>
+</div>
+
+<!-- Third Parallax Image with Portfolio Text -->
+<div class="bgimg-3 w3-display-container w3-opacity-min">
+  <div class="w3-display-middle">
+     <span class="w3-xxlarge w3-text-white w3-wide">CONTACT</span>
+  </div>
+</div>
+
+<!-- Container (Contact Section) -->
+<div class="w3-content w3-container w3-padding-64" id="contact">
+  <h3 class="w3-center">Our project members</h3>
+  <p class="w3-center"><em>We'd love your feedback!</em></p>
+  <center>
+  <a href="mailto:krishnavamsi.d16@iiits.in?Subject=Hello%20again" target="_top"> <i class="material-icons">email</i>D.krishna vamsi</a>:201611124<br>
+
+   <a href="mailto:hemanthkumar.y16@iiits.in?Subject=Hello%20again" target="_top"> <i class="material-icons">email</i> Y.Hemanth kumar</a>:201601108<br>
+   <a href="mailto:nikhilkumar.c16@iiits.in?Subject=Hello%20again" target="_top"><i class="material-icons">email</i>C.Nikhil kumar</a>:201611123<br>
+      <a href="mailto:saisuresh.g16@iiits.in?Subject=Hello%20again" target="_top"> <i class="material-icons">email</i>Sai Suresh.G</a>:201611128<br>
+          <a href="mailto:dheeraj.c16@iiits.in?Subject=Hello%20again" target="_top"><i class="material-icons">email</i>C.Dheeraj</a>:201611118<br>
+  <a href="mailto:adamya.g16@iiits.in?Subject=Hello%20again" target="_top"><i class="material-icons">email</i>Adamya gupta</a>:201611109<br>
+      </center>
+  
+ 
+<!-- Add Google Maps -->
+<script>
+// Modal Image Gallery
+function onClick(element) {
+  document.getElementById("img01").src = element.src;
+  document.getElementById("modal01").style.display = "block";
+  var captionText = document.getElementById("caption");
+  captionText.innerHTML = element.alt;
+}
+
+// Change style of navbar on scroll
+window.onscroll = function() {myFunction()};
+function myFunction() {
+    var navbar = document.getElementById("myNavbar");
+    if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        navbar.className = "w3-bar" + " w3-card" + " w3-animate-top" + " w3-white";
+    } else {
+        navbar.className = navbar.className.replace(" w3-card w3-animate-top w3-white", "");
+    }
+}
+
+// Used to toggle the menu on small screens when clicking on the menu button
+function toggleFunction() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu-916DdpKAjTmJNIgngS6HL_kDIKU0aU&callback=myMap"></script>
+<!--
+To use this code on your website, get a free API key from Google.
+Read more at: https://www.w3schools.com/graphics/google_maps_basic.asp
+-->
+</body>
+</html>
